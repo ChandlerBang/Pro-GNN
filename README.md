@@ -45,6 +45,12 @@ python train.py --dataset polblogs --attack meta --ratio 0.15 --epoch 1000
 To reproduce the performance reported in the paper, you can run the bash files in folder `scripts`
 ```
 sh scripts/meta/cora_meta.sh
+``
+`
+## Generate attack by yourself
+With the help of DeepRobust, you can run the following code to generate meta attack
+```
+python generate_attack.py --dataset cora --ptb_rate 0.05 --seed 15
 ```
 
 ## Cite
