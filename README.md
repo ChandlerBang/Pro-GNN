@@ -58,12 +58,10 @@ For more information, you can take a look at the [paper](https://arxiv.org/abs/2
 
 If you find this repo to be useful, please cite our paper. Thank you.
 ```
-@misc{jin2020graph,
-    title={Graph Structure Learning for Robust Graph Neural Networks},
-    author={Wei Jin and Yao Ma and Xiaorui Liu and Xianfeng Tang and Suhang Wang and Jiliang Tang},
-    year={2020},
-    eprint={2005.10203},
-    archivePrefix={arXiv},
-    primaryClass={cs.LG}
+@article{jin2020graph,
+  title={Graph Structure Learning for Robust Graph Neural Networks},
+  author={Jin, Wei and Ma, Yao and Liu, Xiaorui and Tang, Xianfeng and Wang, Suhang and Tang, Jiliang},
+  journal={arXiv preprint arXiv:2005.10203},
+  year={2020}
 }
 ```
