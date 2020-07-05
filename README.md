@@ -42,7 +42,10 @@ cd Pro-GNN
 python train.py --dataset polblogs --attack meta --ratio 0.15 --epoch 1000
 ```
 
-To reproduce the performance reported in the paper, you can run the bash files in folder `scripts`
+## Reproduce the results
+All the hyper-parameters settings are included in [`scripts`](https://github.com/ChandlerBang/Pro-GNN/tree/master/scripts) folder. Note that same hyper-parameters are used under different perturbation for the same dataset. 
+
+To reproduce the performance reported in the paper, you can run the bash files in folder `scripts`.
 ```
 sh scripts/meta/cora_meta.sh
 ```
