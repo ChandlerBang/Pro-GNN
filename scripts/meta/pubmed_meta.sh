@@ -1,6 +1,7 @@
 #!/bin/bash
 
 python train.py \
+    --debug \
     --seed 10 \
     --dataset pubmed \
     --attack meta \

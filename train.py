@@ -72,7 +72,8 @@ if args.attack == 'meta' or args.attack == 'nettack':
             attack_method=args.attack,
             ptb_rate=args.ptb_rate)
     perturbed_adj = perturbed_data.adj
-
+    if args.attack == 'nettack':
+        idx_test = perturbed_data.target_nodes
 
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
@@ -83,7 +84,6 @@ model = GCN(nfeat=features.shape[1],
             dropout=args.dropout, device=device)
 
 perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
-
 prognn = ProGNN(model, args, device)
 prognn.fit(features, perturbed_adj, labels, idx_train, idx_val)
 prognn.test(features, labels, idx_test)
