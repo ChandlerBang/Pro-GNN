@@ -1,4 +1,4 @@
-# Pro-GNN
+# Pro-GNN [[paper]](https://arxiv.org/abs/2005.10203)[[slides]](http://cse.msu.edu/~jinwei2/files/Slides_ProGNN.pdf)
 
 A PyTorch implementation of "Graph Structure Learning for Robust Graph Neural Networks" (KDD 2020). [[paper]](https://arxiv.org/abs/2005.10203)
 
