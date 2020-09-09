@@ -1,6 +1,6 @@
-# Pro-GNN [[paper]](https://arxiv.org/abs/2005.10203)[[slides]](http://cse.msu.edu/~jinwei2/files/Slides_ProGNN.pdf)
+# Pro-GNN 
 
-A PyTorch implementation of "Graph Structure Learning for Robust Graph Neural Networks" (KDD 2020). [[paper]](https://arxiv.org/abs/2005.10203)
+A PyTorch implementation of "Graph Structure Learning for Robust Graph Neural Networks" (KDD 2020). [[paper]](https://arxiv.org/abs/2005.10203) [[slides]](http://cse.msu.edu/~jinwei2/files/Slides_ProGNN.pdf)
 
 The code is based on our Pytorch adversarial repository, DeepRobust [(https://github.com/DSE-MSU/DeepRobust)](https://github.com/DSE-MSU/DeepRobust)
 
