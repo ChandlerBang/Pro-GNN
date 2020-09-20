@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from deeprobust.graph.defense import GCN, ProGNN
 from deeprobust.graph.data import Dataset, PrePtbDataset
-from deeprobust.graph.utils import preprocess
+from deeprobust.graph.utils import preprocess, encode_onehot, get_train_val_test
 
 # Training settings
 parser = argparse.ArgumentParser()
@@ -52,9 +52,14 @@ print(args)
 
 np.random.seed(15) # Here the random seed is to split the train/val/test data, we need to set the random seed to be the same as that when you generate the perturbed graph
 
-data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
+data = Dataset(root='/tmp/', name=args.dataset, setting='nettack')
 adj, features, labels = data.adj, data.features, data.labels
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
+
+if args.dataset == 'pubmed':
+    # just for matching the results in the paper; seed details in https://github.com/ChandlerBang/Pro-GNN/issues/2
+    idx_train, idx_val, idx_test = get_train_val_test(adj.shape[0],
+            val_size=0.1, test_size=0.8, stratify=encode_onehot(labels), seed=15)
 
 if args.attack == 'no':
     perturbed_adj = adj
@@ -82,14 +87,9 @@ model = GCN(nfeat=features.shape[1],
             nclass=labels.max().item() + 1,
             dropout=args.dropout, device=device)
 
-
-
-import ipdb
-ipdb.set_trace()
-
 if args.only_gcn:
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, sparse=True, device=device)
-    model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, patience=100, train_iters=args.epochs)
+    model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True,  rain_iters=args.epochs)
     model.test(idx_test)
 else:
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
