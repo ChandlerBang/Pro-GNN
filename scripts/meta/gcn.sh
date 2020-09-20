@@ -1,11 +1,11 @@
 #!/bin/bash
 
 python train.py \
-    --seed 10 \
-    --dataset cora \
+    --seed 15 \
+    --dataset pubmed \
     --attack meta \
-    --ptb_rate 0.15 \
-    --lr  1e-2 \
-    --epoch 200 \
+    --ptb_rate 0.0 \
+    --lr  0.01 \
+    --epoch 500 \
     --only_gcn \
     

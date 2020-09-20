@@ -43,7 +43,6 @@ parser.add_argument('--symmetric', action='store_true', default=False,
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 device = torch.device("cuda" if args.cuda else "cpu")
-
 if args.cuda:
     torch.cuda.manual_seed(args.seed)
 if args.ptb_rate == 0:
@@ -53,7 +52,7 @@ print(args)
 
 np.random.seed(15) # Here the random seed is to split the train/val/test data, we need to set the random seed to be the same as that when you generate the perturbed graph
 
-data = Dataset(root='/tmp/', name=args.dataset, setting='nettack')
+data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
 adj, features, labels = data.adj, data.features, data.labels
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
@@ -83,8 +82,18 @@ model = GCN(nfeat=features.shape[1],
             nclass=labels.max().item() + 1,
             dropout=args.dropout, device=device)
 
-perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
-prognn = ProGNN(model, args, device)
-prognn.fit(features, perturbed_adj, labels, idx_train, idx_val)
-prognn.test(features, labels, idx_test)
+
+
+import ipdb
+ipdb.set_trace()
+
+if args.only_gcn:
+    perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, sparse=True, device=device)
+    model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, patience=100, train_iters=args.epochs)
+    model.test(idx_test)
+else:
+    perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
+    prognn = ProGNN(model, args, device)
+    prognn.fit(features, perturbed_adj, labels, idx_train, idx_val)
+    prognn.test(features, labels, idx_test)
 
