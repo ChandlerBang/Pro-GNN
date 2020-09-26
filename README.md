@@ -39,7 +39,7 @@ After installation, you can clone this repository
 ```
 git clone https://github.com/ChandlerBang/Pro-GNN.git
 cd Pro-GNN
-python train.py --dataset polblogs --attack meta --ratio 0.15 --epoch 1000
+python train.py --dataset polblogs --attack meta --ptb_rate 0.15 --epoch 1000
 ```
 
 ## Reproduce the results
