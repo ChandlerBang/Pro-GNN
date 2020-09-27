@@ -68,7 +68,8 @@ if args.attack == 'random':
     from deeprobust.graph.global_attack import Random
     attacker = Random()
     n_perturbations = int(args.ptb_rate * (adj.sum()//2))
-    perturbed_adj = attacker.attack(adj, n_perturbations, type='add')
+    attacker.attack(adj, n_perturbations, type='add')
+    perturbed_adj = attacker.modified_adj
 
 if args.attack == 'meta' or args.attack == 'nettack':
     perturbed_data = PrePtbDataset(root='/tmp/',
