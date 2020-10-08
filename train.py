@@ -66,6 +66,10 @@ if args.attack == 'no':
 
 if args.attack == 'random':
     from deeprobust.graph.global_attack import Random
+    # to fix the seed of generated random attack, you need to fix both np.random and random
+    # you can uncomment the following code
+    # import random; random.seed(args.seed)
+    # np.random.seed(args.seed)
     attacker = Random()
     n_perturbations = int(args.ptb_rate * (adj.sum()//2))
     attacker.attack(adj, n_perturbations, type='add')
