@@ -27,7 +27,11 @@ tensorboardX==2.0
 ```
 
 ## Installation
-To run the code, first you need to clone DeepRobust
+To run the code, first you need to install DeepRobust:
+```
+pip install deeprobust
+```
+Or you can clone it and install from source code:
 ```
 git clone https://github.com/DSE-MSU/DeepRobust.git
 cd DeepRobust
