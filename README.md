@@ -67,10 +67,12 @@ For more information, you can take a look at the [paper](https://arxiv.org/abs/2
 
 If you find this repo to be useful, please cite our paper. Thank you.
 ```
-@article{jin2020graph,
+@inproceedings{jin2020graph,
   title={Graph Structure Learning for Robust Graph Neural Networks},
   author={Jin, Wei and Ma, Yao and Liu, Xiaorui and Tang, Xianfeng and Wang, Suhang and Tang, Jiliang},
-  journal={arXiv preprint arXiv:2005.10203},
-  year={2020}
+  booktitle={26th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, KDD 2020},
+  pages={66--74},
+  year={2020},
+  organization={Association for Computing Machinery}
 }
 ```
