@@ -94,7 +94,7 @@ model = GCN(nfeat=features.shape[1],
 
 if args.only_gcn:
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, sparse=True, device=device)
-    model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True,  rain_iters=args.epochs)
+    model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, train_iters=args.epochs)
     model.test(idx_test)
 else:
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
