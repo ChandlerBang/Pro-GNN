@@ -14,7 +14,7 @@ for file in os.listdir(path):
     print('Reading %s' % filename)
     adj = np.load(filename)
     adj = sp.csr_matrix(adj)
-    sp.save_npz(f'mettack/{file[:-4]}.npz', adj)
+    sp.save_npz(f'{file[:-4]}.npz', adj)
 
 
 import ipdb
