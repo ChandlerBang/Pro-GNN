@@ -50,59 +50,14 @@ if args.ptb_rate == 0:
 
 print(args)
 
-# Here the random seed is to split the train/val/test data,
-# we need to set the random seed to be the same as that when you generate the perturbed graph
-# but now change the setting from nettack to prognn which directly loads the prognn splits
-# data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
-data = Dataset(root='/tmp/', name=args.dataset, setting='prognn')
+# Here the random seed is to split the train/val/test data, we need to set the random seed to be the same as that when you generate the perturbed graph
+data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
 adj, features, labels = data.adj, data.features, data.labels
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
-if args.dataset == 'pubmed':
-    # just for matching the results in the paper, see details in https://github.com/ChandlerBang/Pro-GNN/issues/2
-    print("just for matching the results in the paper," + \
-          "see details in https://github.com/ChandlerBang/Pro-GNN/issues/2")
-    idx_train, idx_val, idx_test = get_train_val_test(adj.shape[0],
-            val_size=0.1, test_size=0.8, stratify=encode_onehot(labels), seed=15)
-
-if args.attack == 'no':
-    perturbed_adj = adj
-
-if args.attack == 'random':
-    from deeprobust.graph.global_attack import Random
-    # to fix the seed of generated random attack, you need to fix both np.random and random
-    # you can uncomment the following code
-    # import random; random.seed(args.seed)
-    # np.random.seed(args.seed)
-    attacker = Random()
-    n_perturbations = int(args.ptb_rate * (adj.sum()//2))
-    attacker.attack(adj, n_perturbations, type='add')
-    perturbed_adj = attacker.modified_adj
-
-if args.attack == 'meta' or args.attack == 'nettack':
-    perturbed_data = PrePtbDataset(root='/tmp/',
-            name=args.dataset,
-            attack_method=args.attack,
-            ptb_rate=args.ptb_rate)
-    perturbed_adj = perturbed_data.adj
-    if args.attack == 'nettack':
-        idx_test = perturbed_data.target_nodes
-
-np.random.seed(args.seed)
-torch.manual_seed(args.seed)
-
-model = GCN(nfeat=features.shape[1],
-            nhid=args.hidden,
-            nclass=labels.max().item() + 1,
-            dropout=args.dropout, device=device)
-
-if args.only_gcn:
-    perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, sparse=True, device=device)
-    model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, train_iters=args.epochs)
-    model.test(idx_test)
-else:
-    perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
-    prognn = ProGNN(model, args, device)
-    prognn.fit(features, perturbed_adj, labels, idx_train, idx_val)
-    prognn.test(features, labels, idx_test)
-
+import json
+splits = {'idx_train': idx_train.tolist(),
+          'idx_val': idx_val.tolist(),
+          'idx_test': idx_test.tolist()}
+with open(f'splits/{args.dataset}_prognn_splits.json', 'w') as f:
+    json.dump(splits, f)
