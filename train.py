@@ -58,12 +58,6 @@ data = Dataset(root='/tmp/', name=args.dataset, setting='prognn')
 adj, features, labels = data.adj, data.features, data.labels
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
-if args.dataset == 'pubmed':
-    # just for matching the results in the paper, see details in https://github.com/ChandlerBang/Pro-GNN/issues/2
-    print("just for matching the results in the paper," + \
-          "see details in https://github.com/ChandlerBang/Pro-GNN/issues/2")
-    idx_train, idx_val, idx_test = get_train_val_test(adj.shape[0],
-            val_size=0.1, test_size=0.8, stratify=encode_onehot(labels), seed=15)
 
 if args.attack == 'no':
     perturbed_adj = adj

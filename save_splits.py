@@ -55,6 +55,18 @@ data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
 adj, features, labels = data.adj, data.features, data.labels
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
+
+if args.dataset == 'pubmed':
+    # just for matching the results in the paper, see details in https://github.com/ChandlerBang/Pro-GNN/issues/2
+    print("just for matching the results in the paper," + \
+          "see details in https://github.com/ChandlerBang/Pro-GNN/issues/2")
+
+    import ipdb
+    ipdb.set_trace()
+
+    idx_train, idx_val, idx_test = get_train_val_test(adj.shape[0],
+            val_size=0.1, test_size=0.8, stratify=encode_onehot(labels), seed=15)
+
 import json
 splits = {'idx_train': idx_train.tolist(),
           'idx_val': idx_val.tolist(),
