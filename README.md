@@ -53,8 +53,11 @@ To reproduce the performance reported in the paper, you can run the bash files i
 ```
 sh scripts/meta/cora_meta.sh
 ```
-**IMPORTANT NOTICE** For the performance of Pubmed dataset, if you don't add the code (line 59-62 in `train.py`), the performance of GCN should be around 85 since the data splits are different from what I used in the paper. See details in https://github.com/ChandlerBang/Pro-GNN/issues/2
+To test performance under different severity of attack, you can change the `ptb_rate` in those bash files.
 
+<!--
+**IMPORTANT NOTICE** For the performance of Pubmed dataset, if you don't add the code (line 59-62 in `train.py`), the performance of GCN should be around 85 since the data splits are different from what I used in the paper. See details in https://github.com/ChandlerBang/Pro-GNN/issues/2
+-->
 
 ## Generate attack by yourself
 With the help of DeepRobust, you can run the following code to generate meta attack
