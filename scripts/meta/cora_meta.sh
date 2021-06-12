@@ -9,7 +9,7 @@ python train.py \
     --beta 1.5  \
     --gamma 1 \
     --lambda_ 0.001 \
-    --lr  1e-3 \
-    --epoch 400 \
+    --lr  5e-4 \
+    --epoch 1000 \
     \
      
