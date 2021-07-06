@@ -2,7 +2,8 @@ import time
 import argparse
 import numpy as np
 import torch
-from deeprobust.graph.defense import GCN, ProGNN
+from deeprobust.graph.defense import GCN
+from prognn import ProGNN # copy from deeprobust.graph.defense
 from deeprobust.graph.data import Dataset, PrePtbDataset
 from deeprobust.graph.utils import preprocess, encode_onehot, get_train_val_test
 
@@ -58,7 +59,7 @@ data = Dataset(root='/tmp/', name=args.dataset, setting='prognn')
 adj, features, labels = data.adj, data.features, data.labels
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
-
+#資料前處理
 if args.attack == 'no':
     perturbed_adj = adj
 
@@ -69,8 +70,8 @@ if args.attack == 'random':
     # import random; random.seed(args.seed)
     # np.random.seed(args.seed)
     attacker = Random()
-    n_perturbations = int(args.ptb_rate * (adj.sum()//2))
-    attacker.attack(adj, n_perturbations, type='add')
+    n_perturbations = int(args.ptb_rate * (adj.sum()//2)) #擾動率*graph所有可以連接的邊
+    attacker.attack(adj, n_perturbations, type='add') #加邊
     perturbed_adj = attacker.modified_adj
 
 if args.attack == 'meta' or args.attack == 'nettack':
@@ -81,6 +82,7 @@ if args.attack == 'meta' or args.attack == 'nettack':
     perturbed_adj = perturbed_data.adj
     if args.attack == 'nettack':
         idx_test = perturbed_data.target_nodes
+        print("[INFO] idx_test", idx_test)
 
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
