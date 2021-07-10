@@ -123,6 +123,7 @@ class ProGNN:
         loss_val = F.nll_loss(output[idx_val], labels[idx_val])
         acc_val = accuracy(output[idx_val], labels[idx_val])
 
+        # 驗證準確率 > 目前最佳驗證準確率，則更新
         if acc_val > self.best_val_acc:
             self.best_val_acc = acc_val
             self.best_graph = adj.detach()
@@ -130,6 +131,7 @@ class ProGNN:
             if args.debug:
                 print('\t=== saving current graph/gcn, best_val_acc: %s' % self.best_val_acc.item())
 
+        # 驗證loss < 目前最佳的驗證loss，則更新
         if loss_val < self.best_val_loss:
             self.best_val_loss = loss_val
             self.best_graph = adj.detach()
@@ -187,6 +189,7 @@ class ProGNN:
         self.optimizer_l1.zero_grad()
         self.optimizer_l1.step()
 
+        # 整體損失
         total_loss = loss_fro \
                     + args.gamma * loss_gcn \
                     + args.alpha * loss_l1 \
@@ -210,22 +213,28 @@ class ProGNN:
               'acc_val: {:.4f}'.format(acc_val.item()),
               'time: {:.4f}s'.format(time.time() - t))
 
+        # 驗證準確率 > 目前最佳驗證準確率，則更新
         if acc_val > self.best_val_acc:
             self.best_val_acc = acc_val
             self.best_graph = normalized_adj.detach()
-            print("[INFO acc_val > self.best_val_acc] ", self.best_graph)
+            #print("[INFO acc_val > self.best_val_acc] ", self.best_graph)
             self.weights = deepcopy(self.model.state_dict())
             if args.debug:
                 print(f'\t=== saving current graph/gcn, best_val_acc: %s' % self.best_val_acc.item())
 
+        # 驗證loss < 目前最佳的驗證loss，則更新
         if loss_val < self.best_val_loss:
             self.best_val_loss = loss_val
             self.best_graph = normalized_adj.detach()
-            print("[INFO loss_val < self.best_val_loss] ", self.best_graph)
+            #print("[INFO loss_val < self.best_val_loss] ", self.best_graph)
             self.weights = deepcopy(self.model.state_dict())
             if args.debug:
                 print(f'\t=== saving current graph/gcn, best_val_loss: %s' % self.best_val_loss.item())
 
+        #print("[info] best graph", self.best_graph, "\n")
+        #print("tensor size", self.best_graph.size())
+        #print("[info] best graph list", sum( self.best_graph.cpu().numpy().tolist()[0] ), sum( self.best_graph.cpu().numpy().tolist()[1] ), sum( self.best_graph.cpu().numpy().tolist()[2] ), sum( self.best_graph.cpu().numpy().tolist()[3] ), sum( self.best_graph.cpu().numpy().tolist()[2484] ))
+        
         if args.debug:
             if epoch % 1 == 0:
                 print('Epoch: {:04d}'.format(epoch+1),

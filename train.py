@@ -6,6 +6,7 @@ from deeprobust.graph.defense import GCN
 from prognn import ProGNN # copy from deeprobust.graph.defense
 from deeprobust.graph.data import Dataset, PrePtbDataset
 from deeprobust.graph.utils import preprocess, encode_onehot, get_train_val_test
+from bigclam import train_labels
 
 # Training settings
 parser = argparse.ArgumentParser()
@@ -40,6 +41,7 @@ parser.add_argument('--outer_steps', type=int, default=1, help='steps for outer 
 parser.add_argument('--lr_adj', type=float, default=0.01, help='lr for training adj')
 parser.add_argument('--symmetric', action='store_true', default=False,
             help='whether use symmetric matrix')
+parser.add_argument('--pre', type=str, default='', help='preprocessing with bigCLAM algorithm')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -57,6 +59,7 @@ print(args)
 # data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
 data = Dataset(root='/tmp/', name=args.dataset, setting='prognn')
 adj, features, labels = data.adj, data.features, data.labels
+print("LABELS", labels)
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
 #資料前處理
@@ -84,6 +87,11 @@ if args.attack == 'meta' or args.attack == 'nettack':
         idx_test = perturbed_data.target_nodes
         print("[INFO] idx_test", idx_test)
 
+## 使用BigCLAM做資料前處理，再將切出來的sub-graph分別丟入ProGNN中做訓練
+if args.pre == 'big':
+    print("Run BigCLAM algorithm to split dataset...")
+    
+        
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
 
@@ -96,8 +104,19 @@ if args.only_gcn:
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, sparse=True, device=device)
     model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, train_iters=args.epochs)
     model.test(idx_test)
+elif args.pre == 'big':
+    labels_t = train_labels(perturbed_adj.toarray(), 7, iterations=10)
+    print(labels_t, len(labels_t), labels, len(labels))
+    perturbed_adj, features, labels_t = preprocess(perturbed_adj, features, labels_t, preprocess_adj=False, device=device)
+    labels = preprocess(labels, preprocess_adj=False, device=device)
+
+    prognn = ProGNN(model, args, device)
+    prognn.fit(features, perturbed_adj, labels_t, idx_train, idx_val)
+    prognn.test(features, labels, idx_test)
+    
 else:
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, device=device)
+    print("perturbed adj is", perturbed_adj, "label", labels, "features", features)
     prognn = ProGNN(model, args, device)
     prognn.fit(features, perturbed_adj, labels, idx_train, idx_val)
     prognn.test(features, labels, idx_test)
