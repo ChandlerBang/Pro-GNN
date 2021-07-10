@@ -7,6 +7,7 @@ from prognn import ProGNN # copy from deeprobust.graph.defense
 from deeprobust.graph.data import Dataset, PrePtbDataset
 from deeprobust.graph.utils import preprocess, encode_onehot, get_train_val_test
 from bigclam import train_labels
+from scipy import sparse
 
 # Training settings
 parser = argparse.ArgumentParser()
@@ -59,6 +60,7 @@ print(args)
 # data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
 data = Dataset(root='/tmp/', name=args.dataset, setting='prognn')
 adj, features, labels = data.adj, data.features, data.labels
+features2 = data.features
 print("LABELS", labels)
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
@@ -83,6 +85,7 @@ if args.attack == 'meta' or args.attack == 'nettack':
             attack_method=args.attack,
             ptb_rate=args.ptb_rate)
     perturbed_adj = perturbed_data.adj
+    perturbed_adj2 = perturbed_data.adj
     if args.attack == 'nettack':
         idx_test = perturbed_data.target_nodes
         print("[INFO] idx_test", idx_test)
@@ -105,10 +108,16 @@ if args.only_gcn:
     model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, train_iters=args.epochs)
     model.test(idx_test)
 elif args.pre == 'big':
-    labels_t = train_labels(perturbed_adj.toarray(), 7, iterations=10)
+    labels_t = train_labels(perturbed_adj.toarray(), 7, iterations=1)
     print(labels_t, len(labels_t), labels, len(labels))
+    
+    #print(features, type(features))
     perturbed_adj, features, labels_t = preprocess(perturbed_adj, features, labels_t, preprocess_adj=False, device=device)
-    labels = preprocess(labels, preprocess_adj=False, device=device)
+    #print(features, type(features))
+    
+    #features = features.cpu().numpy()
+    #print(features)
+    perturbed_adj2, features2, labels = preprocess(perturbed_adj2, features2, labels, preprocess_adj=False, device=device)
 
     prognn = ProGNN(model, args, device)
     prognn.fit(features, perturbed_adj, labels_t, idx_train, idx_val)
