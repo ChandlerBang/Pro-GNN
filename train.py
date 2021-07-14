@@ -60,6 +60,7 @@ print(args)
 # data = Dataset(root='/tmp/', name=args.dataset, setting='nettack', seed=15)
 data = Dataset(root='/tmp/', name=args.dataset, setting='prognn')
 adj, features, labels = data.adj, data.features, data.labels
+adj2, features2, labels2 = data.adj, data.features, data.labels
 features2 = data.features
 print("LABELS", labels)
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
@@ -80,6 +81,7 @@ if args.attack == 'random':
     perturbed_adj = attacker.modified_adj
 
 if args.attack == 'meta' or args.attack == 'nettack':
+    # 生成 data 到 /tmp/
     perturbed_data = PrePtbDataset(root='/tmp/',
             name=args.dataset,
             attack_method=args.attack,
@@ -104,7 +106,11 @@ model = GCN(nfeat=features.shape[1],
             dropout=args.dropout, device=device)
 
 if args.only_gcn:
+    print('---------- before preprocess ----------')
+    print('perturbed_adj: ', type(perturbed_adj))
     perturbed_adj, features, labels = preprocess(perturbed_adj, features, labels, preprocess_adj=False, sparse=True, device=device)
+    print('---------- after preprocess ----------')
+    print('perturbed_adj: ', type(perturbed_adj))
     model.fit(features, perturbed_adj, labels, idx_train, idx_val, verbose=True, train_iters=args.epochs)
     model.test(idx_test)
 elif args.pre == 'big':

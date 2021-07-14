@@ -58,6 +58,8 @@ class ProGNN:
         self.optimizer = optim.Adam(self.model.parameters(),
                                lr=args.lr, weight_decay=args.weight_decay)
         estimator = EstimateAdj(adj, symmetric=args.symmetric, device=self.device).to(self.device)
+        # EstimateAdj 提供一個 pytorch parameter matrix
+        #estimator_ori = EstimateAdj(ori_adj, symmetric=args.symmetric, device=self.device).to(self.device)
         self.estimator = estimator
         self.optimizer_adj = optim.SGD(estimator.parameters(),
                               momentum=0.9, lr=args.lr_adj)
@@ -76,8 +78,8 @@ class ProGNN:
         self.optimizer_nuclear = PGD(estimator.parameters(),
                   proxs=[prox_operators.prox_nuclear],
                   lr=args.lr_adj, alphas=[args.beta])
-
-        # Train model
+        
+        # One Stage
         t_total = time.time()
         for epoch in range(args.epochs):
             if args.only_gcn:
@@ -91,7 +93,17 @@ class ProGNN:
                 for i in range(int(args.inner_steps)):
                     self.train_gcn(epoch, features, estimator.estimated_adj,
                             labels, idx_train, idx_val)
-
+        """
+        # Two Stages
+        for epoch in range(args.epochs):
+            for i in range(int(args.outer_steps)):
+                self.train_adj(epoch, features, adj, labels,
+                        idx_train, idx_val)
+        for epoch in range(args.epochs):
+            for i in range(int(args.inner_steps)):
+                self.train_gcn(epoch, features, estimator.estimated_adj,
+                        labels, idx_train, idx_val)
+        """
         print("Optimization Finished!")
         print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
         print(args)
@@ -157,10 +169,12 @@ class ProGNN:
             print("\n=== train_adj ===")
         t = time.time()
         estimator.train()
+        # 總共三個 optimizer 對應 4,5,6 行
+        # 先把第一個 optimizer 歸零 (4)
         self.optimizer_adj.zero_grad()
 
-        loss_l1 = torch.norm(estimator.estimated_adj, 1)
-        loss_fro = torch.norm(estimator.estimated_adj - adj, p='fro')
+        loss_l1 = torch.norm(estimator.estimated_adj, 1) # low rank, sparse
+        loss_fro = torch.norm(estimator.estimated_adj - adj, p='fro') # budget
         normalized_adj = estimator.normalize()
 
         if args.lambda_:
@@ -176,18 +190,20 @@ class ProGNN:
                         - estimator.estimated_adj.t(), p="fro")
 
         loss_diffiential =  loss_fro + args.gamma * loss_gcn + args.lambda_ * loss_smooth_feat + args.phi * loss_symmetric
-
+        #                   budget     GCN Loss                feature smoothness                symmetric function projection
         loss_diffiential.backward()
-
+        # 更新參數
+        # alg 4
         self.optimizer_adj.step()
+        # alg 5
         loss_nuclear =  0 * loss_fro
         if args.beta != 0:
             self.optimizer_nuclear.zero_grad()
             self.optimizer_nuclear.step()
-            loss_nuclear = prox_operators.nuclear_norm
+            loss_nuclear = prox_operators.nuclear_norm # singular value 
 
-        self.optimizer_l1.zero_grad()
-        self.optimizer_l1.step()
+        self.optimizer_l1.zero_grad() # 清空所有被優化過的 variable 梯度
+        self.optimizer_l1.step() # update parameter
 
         # 整體損失
         total_loss = loss_fro \
@@ -195,7 +211,8 @@ class ProGNN:
                     + args.alpha * loss_l1 \
                     + args.beta * loss_nuclear \
                     + args.phi * loss_symmetric
-
+        
+        # function P (ALG第七行)
         estimator.estimated_adj.data.copy_(torch.clamp(
                   estimator.estimated_adj.data, min=0, max=1))
 

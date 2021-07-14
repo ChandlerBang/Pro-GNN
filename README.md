@@ -2,6 +2,8 @@
 
 "Graph Structure Learning for Robust Graph Neural Networks" (KDD 2020). [[paper]](https://arxiv.org/abs/2005.10203)
 
+[Team 10 Slide](https://docs.google.com/presentation/d/1Zdad6E2cU635qaVq9PJrZfprByjD3b0GP_yHgO5GOqs/edit?usp=sharing)
+
 ## Requirements
 See that in https://github.com/DSE-MSU/DeepRobust/blob/master/requirements.txt
 ```
@@ -42,5 +44,8 @@ sh scripts/meta/cora_meta.sh
 ```
 
 ## Experiment Result
-要重現我們的實驗可以跑，可以跑以下sh，每個都代表一個實驗設定(已把option設好)
-sh scripts/experiment/cora_meta_5_1_1.sh
+要重現我們的實驗可以跑，可以跑 scripts/experiment 下的sh，每個都代表一個實驗設定(已把option設好)
+例如 `sh scripts/experiment/cora_meta_5_1_1.sh`
+
+## 一些會用到的文件
+[deeprobust document](https://deeprobust.readthedocs.io/_/downloads/en/latest/pdf/)
