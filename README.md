@@ -1,6 +1,6 @@
-# Pro-GNN 
+# Final Project Team 10 - KDD 2020 Graph Structure Learning for Robust Graph Neural Networks
 
-A PyTorch implementation of "Graph Structure Learning for Robust Graph Neural Networks" (KDD 2020). [[paper]](https://arxiv.org/abs/2005.10203) [[slides]](http://cse.msu.edu/~jinwei2/files/Slides_ProGNN.pdf)
+"Graph Structure Learning for Robust Graph Neural Networks" (KDD 2020). [[paper]](https://arxiv.org/abs/2005.10203)
 
 The code is based on our Pytorch adversarial repository, DeepRobust [(https://github.com/DSE-MSU/DeepRobust)](https://github.com/DSE-MSU/DeepRobust)
 
@@ -58,6 +58,8 @@ To test performance under different severity of attack, you can change the `ptb_
 <!--
 **IMPORTANT NOTICE** For the performance of Pubmed dataset, if you don't add the code (line 59-62 in `train.py`), the performance of GCN should be around 85 since the data splits are different from what I used in the paper. See details in https://github.com/ChandlerBang/Pro-GNN/issues/2
 -->
+
+## Experiment Result
 
 ## Generate attack by yourself
 With the help of DeepRobust, you can run the following code to generate meta attack
