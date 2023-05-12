@@ -6,6 +6,15 @@ The code is based on our Pytorch adversarial repository, DeepRobust [(https://gi
 
 <div align=center><img src="https://raw.githubusercontent.com/ChandlerBang/Pro-GNN/master/ProGNN.png" width="700"/></div>
 
+Note
+----
+Although in the original paper we did not provide the results on large-scale graphs, we encourage researchers to test your model on attacked large graphs. DeepRobust has provided APIs to perform scalable attacks and you can find an example in [test_prbcd.py](https://github.com/DSE-MSU/DeepRobust/blob/master/examples/graph/test_prbcd.py). 
+
+Another example is in our [ICLR'23 code](https://github.com/ChandlerBang/GTrans#robustness) where we tested our model robustness on the large attacked ogb-arxiv graph. 
+
+Please feel free to open an issue if you have any questions :)
+
+
 ## Abstract 
 Graph Neural Networks (GNNs) are powerful tools in representation learning for graphs. However, recent studies show that GNNs are vulnerable to carefully-crafted perturbations, called adversarial attacks. Adversarial attacks can easily fool GNNs in making predictions for downstream tasks. The vulnerability to adversarial attacks has raised increasing concerns for applying GNNs in safety-critical applications. Therefore, developing robust algorithms to defend adversarial attacks is of great significance. A natural idea to defend adversarial attacks is to clean the perturbed graph. It is evident that real-world graphs share some intrinsic properties. For example, many real-world graphs are low-rank and sparse, and the features of two adjacent nodes tend to be similar. In fact, we find that adversarial attacks are likely to violate these graph properties. Therefore, in this paper, we explore these properties to defend adversarial attacks on graphs. In particular, we propose a general framework Pro-GNN, which can jointly learn a structural graph and a robust graph neural network model from the perturbed graph guided by these properties. Extensive experiments on real-world graphs demonstrate that the proposed framework achieves significantly better performance compared with the state-of-the-art defense methods, even when the graph is heavily perturbed.
 
